@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    
+	<ImageView
+	    android:id="@+id/input_image"
+	    android:layout_width="wrap_content"
+	    android:layout_height="wrap_content"
+	    android:src="@drawable/edit_3"
+	    android:contentDescription="Click to open Input Bar"
+	    android:layout_gravity="center">
+	</ImageView>
+
+	<LinearLayout 
+	    android:id="@+id/input_bar"
+	    android:layout_width="wrap_content"
+	    android:layout_height="wrap_content"
+	    android:orientation="horizontal"
+	    android:background="#333355" >
+		<EditText
+		    android:id="@+id/textField"
+		    android:layout_width="wrap_content"
+		    android:layout_height="wrap_content"
+		    android:inputType="text"
+		    android:focusable="true"
+		    android:hint="scribble...">
+		</EditText>
+		<ImageView
+		    android:id="@+id/copyText"
+		    android:layout_width="wrap_content"
+		    android:layout_height="wrap_content"
+			android:src="@drawable/copy_3"
+			android:layout_gravity="center">
+	   	</ImageView>
+		<ImageView
+		    android:id="@+id/close"
+		    android:layout_width="wrap_content"
+		    android:layout_height="wrap_content"
+			android:src="@drawable/close_4"
+			android:layout_gravity="center">
+	   	</ImageView>
+   	</LinearLayout>
+</LinearLayout>
