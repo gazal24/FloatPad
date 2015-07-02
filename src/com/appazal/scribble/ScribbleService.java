@@ -29,6 +29,7 @@ public class ScribbleService extends Service{
 	EditText textField;
 	ImageView copyText, close;
 	boolean inputLayoutMoved=false;
+	Double MOVE_THRESHOLD = 10.0d;
 	
 	@Override
 	public IBinder onBind(Intent intent) {
@@ -122,7 +123,9 @@ public class ScribbleService extends Service{
 						v.performClick();
 					return true;
 				case MotionEvent.ACTION_MOVE :
-					inputLayoutMoved = true;
+					if(Math.abs(event.getRawX() - initialTouchX) > MOVE_THRESHOLD ||
+						Math.abs(event.getRawY() - initialTouchY) > MOVE_THRESHOLD)
+						inputLayoutMoved = true;
 					layoutParams.x = initialX + (int)(event.getRawX() - initialTouchX);
 					layoutParams.y = initialY + (int)(event.getRawY() - initialTouchY);
 					windowManager.updateViewLayout(inputLayout, layoutParams);
