@@ -1,6 +1,8 @@
 package com.appazal.scribble;
 
 import android.app.Service;
+import android.content.ClipData;
+import android.content.ClipboardManager;
 import android.content.Intent;
 import android.graphics.PixelFormat;
 import android.os.IBinder;
@@ -9,10 +11,12 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.View.OnTouchListener;
 import android.view.WindowManager;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 public class ScribbleService extends Service{
 
@@ -24,7 +28,7 @@ public class ScribbleService extends Service{
 	View inputBar;
 	EditText textField;
 	ImageView copyText, close;
-//	Service self;
+	boolean inputLayoutMoved=false;
 	
 	@Override
 	public IBinder onBind(Intent intent) {
@@ -34,8 +38,7 @@ public class ScribbleService extends Service{
 	@Override
 	public void onCreate() {
 		super.onCreate();
-		Log.i("", "OnCREATE SERvice");
-//		self = this;
+		
 		windowManager = (WindowManager) getSystemService(WINDOW_SERVICE);
 		
 		LayoutInflater layoutInflater = (LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE);
@@ -62,16 +65,29 @@ public class ScribbleService extends Service{
 			@Override
 			public boolean onTouch(View v, MotionEvent event) {
 				Log.i("", "Touched ");
-//				v.performClick();
+				v.performClick();
 				return false;
 			}
-
 		});
 		
-		inputImage.setOnTouchListener(new OnTouchListener() {
+		inputBar.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+			
 			@Override
-			public boolean onTouch(View v, MotionEvent event) {
-				Log.i("", "Image Touched ");
+			public void onFocusChange(View v, boolean hasFocus) {
+				if(hasFocus) {
+					Log.i("input bar ", "Has Focus");
+				} else {
+					Log.i("input bar ", "Lost Focus");
+				}
+			}
+		});
+		
+		inputImage.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				// TODO Auto-generated method stub
+				Log.i("", "Image Clicked");
 				if(inputBar.getVisibility() == View.GONE) {
 					inputBar.setVisibility(View.VISIBLE);
 					layoutParams.flags = WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL;
@@ -83,6 +99,35 @@ public class ScribbleService extends Service{
 							| WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE;
 					windowManager.updateViewLayout(inputLayout, layoutParams);
 				}
+			}
+		});
+		
+		inputImage.setOnTouchListener(new OnTouchListener() {
+			private int initialX, initialY; private float initialTouchX, initialTouchY;
+			
+			@Override
+			public boolean onTouch(View v, MotionEvent event) {
+				Log.i("", "Image Touched ");
+				switch(event.getAction()) {
+				case MotionEvent.ACTION_DOWN :
+					initialX = layoutParams.x;
+					initialY = layoutParams.y;
+					initialTouchX = event.getRawX();
+					initialTouchY = event.getRawY();
+					return true;
+				case MotionEvent.ACTION_UP :
+					if(inputLayoutMoved)
+						inputLayoutMoved = false;
+					else
+						v.performClick();
+					return true;
+				case MotionEvent.ACTION_MOVE :
+					inputLayoutMoved = true;
+					layoutParams.x = initialX + (int)(event.getRawX() - initialTouchX);
+					layoutParams.y = initialY + (int)(event.getRawY() - initialTouchY);
+					windowManager.updateViewLayout(inputLayout, layoutParams);
+					return true;
+				}
 				return false;
 			}
 		});
@@ -91,6 +136,9 @@ public class ScribbleService extends Service{
 			@Override
 			public boolean onTouch(View v, MotionEvent event) {
 				Log.i("", "TextCopied");
+				ClipboardManager clipboardManager = (ClipboardManager)getSystemService(CLIPBOARD_SERVICE);
+				clipboardManager.setPrimaryClip(ClipData.newPlainText("text", textField.getText().toString()));
+				Toast.makeText(getApplicationContext(), "Text Copied", Toast.LENGTH_SHORT).show();
 				return false;
 			}
 		});

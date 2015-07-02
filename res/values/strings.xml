@@ -3,5 +3,6 @@
 
     <string name="app_name">Scribble</string>
     <string name="hello_world">Hello world!</string>
+    <string name="textFieldPlaceholder">Scribble...</string>
 
 </resources>

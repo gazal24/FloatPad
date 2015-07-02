@@ -15,7 +15,7 @@ public class MainActivity extends Activity {
 	@Override
 	protected void onResume() {
 		super.onResume();
-		startService(new Intent(this, ScribbleService.class));
+		startService(new Intent(getApplicationContext(), ScribbleService.class));
 		finish();
 	}
 }
