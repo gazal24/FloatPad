@@ -28,12 +28,12 @@ public class FloatpadService extends Service{
 	View inputLayout;
 
 	boolean inputLayoutMoved=false;
-	
+
 	public class FloatPadViewHolder {
 		View inputBar;
 		EditText textField;
 		ImageView inputImage, copyText, close;
-		
+
 		public FloatPadViewHolder(View v){
 			this.inputBar = v.findViewById(R.id.input_bar);
 			this.textField = (EditText) v.findViewById(R.id.textField);
@@ -42,34 +42,34 @@ public class FloatpadService extends Service{
 			this.close = (ImageView) v.findViewById(R.id.close);
 		}
 	}
-	
+
 	@Override
 	public IBinder onBind(Intent intent) {
 		return null;
 	}
-	
+
 	@Override
 	public void onCreate() {
 		super.onCreate();
-		
+
 		windowManager = (WindowManager) getSystemService(WINDOW_SERVICE);
-		
+
 		LayoutInflater layoutInflater = (LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE);
 		inputLayout = layoutInflater.inflate(R.layout.input_layout, null);
 		viewHolder = new FloatPadViewHolder(inputLayout);
 
 		viewHolder.textField.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-            @Override
-            public void onFocusChange(View v, boolean hasFocus) {
-                if(hasFocus) {
-                    Log.d("", "Has focus");
-//                    ((InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE)).showSoftInput(v, InputMethodManager.SHOW_IMPLICIT);
-                } else {
-                    Log.d("", "Lost focus");
-                }
-            }
-        });
-		
+			@Override
+			public void onFocusChange(View v, boolean hasFocus) {
+				if(hasFocus) {
+					Log.d("", "Has focus");
+					//((InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE)).showSoftInput(v, InputMethodManager.SHOW_IMPLICIT);
+				} else {
+					Log.d("", "Lost focus");
+				}
+			}
+		});
+
 		viewHolder.inputBar.setOnTouchListener(new OnTouchListener() {
 			@Override
 			public boolean onTouch(View v, MotionEvent event) {
@@ -78,7 +78,7 @@ public class FloatpadService extends Service{
 				return false;
 			}
 		});
-		
+
 		viewHolder.inputBar.setOnFocusChangeListener(new View.OnFocusChangeListener() {
 			@Override
 			public void onFocusChange(View v, boolean hasFocus) {
@@ -89,7 +89,7 @@ public class FloatpadService extends Service{
 				}
 			}
 		});
-		
+
 		viewHolder.inputImage.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
@@ -106,7 +106,7 @@ public class FloatpadService extends Service{
 				}
 			}
 		});
-		
+
 		viewHolder.inputImage.setOnTouchListener(new OnTouchListener() {
 			private int initialX, initialY; private float initialTouchX, initialTouchY;
 			@Override
@@ -126,7 +126,7 @@ public class FloatpadService extends Service{
 					return true;
 				case MotionEvent.ACTION_MOVE :
 					if(Math.abs(event.getRawX() - initialTouchX) > MOVE_THRESHOLD ||
-						Math.abs(event.getRawY() - initialTouchY) > MOVE_THRESHOLD)
+							Math.abs(event.getRawY() - initialTouchY) > MOVE_THRESHOLD)
 						inputLayoutMoved = true;
 					layoutParams.x = initialX + (int)(event.getRawX() - initialTouchX);
 					layoutParams.y = initialY + (int)(event.getRawY() - initialTouchY);
@@ -136,7 +136,7 @@ public class FloatpadService extends Service{
 				return false;
 			}
 		});
-		
+
 		viewHolder.copyText.setOnTouchListener(new OnTouchListener() {
 			@Override
 			public boolean onTouch(View v, MotionEvent event) {
@@ -147,7 +147,7 @@ public class FloatpadService extends Service{
 				return false;
 			}
 		});
-		
+
 		viewHolder.close.setOnTouchListener(new OnTouchListener() {
 			@Override
 			public boolean onTouch(View v, MotionEvent event) {
@@ -156,22 +156,22 @@ public class FloatpadService extends Service{
 				return false;
 			}
 		});
-		
+
 		layoutParams = new WindowManager.LayoutParams(
 				WindowManager.LayoutParams.TYPE_PHONE,
 				WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL
-					| WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE,
+				| WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE,
 				PixelFormat.TRANSLUCENT);
-		
+
 		layoutParams.gravity = Gravity.TOP | Gravity.LEFT;
 		layoutParams.x = 0 ; layoutParams.y= 100;
 		layoutParams.width = WindowManager.LayoutParams.WRAP_CONTENT;
 		layoutParams.height = WindowManager.LayoutParams.WRAP_CONTENT;
-		
+
 		windowManager.addView(inputLayout, layoutParams);
-        viewHolder.inputBar.setVisibility(View.GONE);
+		viewHolder.inputBar.setVisibility(View.GONE);
 	}
-	
+
 	@Override
 	public void onDestroy() {
 		if(inputLayout != null) windowManager.removeView(inputLayout);
