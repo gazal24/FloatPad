@@ -22,14 +22,26 @@ public class FloatpadService extends Service{
 
 	WindowManager windowManager;
 	WindowManager.LayoutParams layoutParams;
+	FloatPadViewHolder viewHolder;
+	Double MOVE_THRESHOLD = 10.0d;
 
 	View inputLayout;
-	ImageView inputImage;
-	View inputBar;
-	EditText textField;
-	ImageView copyText, close;
+
 	boolean inputLayoutMoved=false;
-	Double MOVE_THRESHOLD = 10.0d;
+	
+	public class FloatPadViewHolder {
+		View inputBar;
+		EditText textField;
+		ImageView inputImage, copyText, close;
+		
+		public FloatPadViewHolder(View v){
+			this.inputBar = v.findViewById(R.id.input_bar);
+			this.textField = (EditText) v.findViewById(R.id.textField);
+			this.inputImage = (ImageView) v.findViewById(R.id.input_image);
+			this.copyText = (ImageView) v.findViewById(R.id.copyText);
+			this.close = (ImageView) v.findViewById(R.id.close);
+		}
+	}
 	
 	@Override
 	public IBinder onBind(Intent intent) {
@@ -44,13 +56,9 @@ public class FloatpadService extends Service{
 		
 		LayoutInflater layoutInflater = (LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE);
 		inputLayout = layoutInflater.inflate(R.layout.input_layout, null);
-		inputImage = (ImageView) inputLayout.findViewById(R.id.input_image);
-		inputBar = inputLayout.findViewById(R.id.input_bar);
-		textField = (EditText) inputLayout.findViewById(R.id.textField);
-		copyText = (ImageView) inputLayout.findViewById(R.id.copyText);
-		close = (ImageView) inputLayout.findViewById(R.id.close);
-		
-		textField.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+		viewHolder = new FloatPadViewHolder(inputLayout);
+
+		viewHolder.textField.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
                 if(hasFocus) {
@@ -62,7 +70,7 @@ public class FloatpadService extends Service{
             }
         });
 		
-		inputBar.setOnTouchListener(new OnTouchListener() {
+		viewHolder.inputBar.setOnTouchListener(new OnTouchListener() {
 			@Override
 			public boolean onTouch(View v, MotionEvent event) {
 				Log.i("", "Touched ");
@@ -71,8 +79,7 @@ public class FloatpadService extends Service{
 			}
 		});
 		
-		inputBar.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-			
+		viewHolder.inputBar.setOnFocusChangeListener(new View.OnFocusChangeListener() {
 			@Override
 			public void onFocusChange(View v, boolean hasFocus) {
 				if(hasFocus) {
@@ -83,19 +90,16 @@ public class FloatpadService extends Service{
 			}
 		});
 		
-		inputImage.setOnClickListener(new OnClickListener() {
-			
+		viewHolder.inputImage.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				// TODO Auto-generated method stub
-				Log.i("", "Image Clicked");
-				if(inputBar.getVisibility() == View.GONE) {
-					inputBar.setVisibility(View.VISIBLE);
+				if(viewHolder.inputBar.getVisibility() == View.GONE) {
+					viewHolder.inputBar.setVisibility(View.VISIBLE);
 					layoutParams.flags = WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL;
 					windowManager.updateViewLayout(inputLayout, layoutParams);
 				}
 				else {
-					inputBar.setVisibility(View.GONE);
+					viewHolder.inputBar.setVisibility(View.GONE);
 					layoutParams.flags = WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL
 							| WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE;
 					windowManager.updateViewLayout(inputLayout, layoutParams);
@@ -103,12 +107,10 @@ public class FloatpadService extends Service{
 			}
 		});
 		
-		inputImage.setOnTouchListener(new OnTouchListener() {
+		viewHolder.inputImage.setOnTouchListener(new OnTouchListener() {
 			private int initialX, initialY; private float initialTouchX, initialTouchY;
-			
 			@Override
 			public boolean onTouch(View v, MotionEvent event) {
-				Log.i("", "Image Touched ");
 				switch(event.getAction()) {
 				case MotionEvent.ACTION_DOWN :
 					initialX = layoutParams.x;
@@ -135,18 +137,18 @@ public class FloatpadService extends Service{
 			}
 		});
 		
-		copyText.setOnTouchListener(new OnTouchListener() {
+		viewHolder.copyText.setOnTouchListener(new OnTouchListener() {
 			@Override
 			public boolean onTouch(View v, MotionEvent event) {
 				Log.i("", "TextCopied");
 				ClipboardManager clipboardManager = (ClipboardManager)getSystemService(CLIPBOARD_SERVICE);
-				clipboardManager.setPrimaryClip(ClipData.newPlainText("text", textField.getText().toString()));
+				clipboardManager.setPrimaryClip(ClipData.newPlainText("text", viewHolder.textField.getText().toString()));
 				Toast.makeText(getApplicationContext(), "Text Copied", Toast.LENGTH_SHORT).show();
 				return false;
 			}
 		});
 		
-		close.setOnTouchListener(new OnTouchListener() {
+		viewHolder.close.setOnTouchListener(new OnTouchListener() {
 			@Override
 			public boolean onTouch(View v, MotionEvent event) {
 				Log.i("", "Closed");
@@ -167,7 +169,7 @@ public class FloatpadService extends Service{
 		layoutParams.height = WindowManager.LayoutParams.WRAP_CONTENT;
 		
 		windowManager.addView(inputLayout, layoutParams);
-        inputBar.setVisibility(View.GONE);
+        viewHolder.inputBar.setVisibility(View.GONE);
 	}
 	
 	@Override
