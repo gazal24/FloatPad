@@ -1,4 +1,4 @@
-package com.appazal.scribble;
+package com.codeplay.floatpad;
 
 import android.app.Service;
 import android.content.ClipData;
@@ -18,7 +18,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
 
-public class ScribbleService extends Service{
+public class FloatpadService extends Service{
 
 	WindowManager windowManager;
 	WindowManager.LayoutParams layoutParams;

@@ -1,4 +1,4 @@
-package com.appazal.scribble;
+package com.codeplay.floatpad;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -15,7 +15,7 @@ public class MainActivity extends Activity {
 	@Override
 	protected void onResume() {
 		super.onResume();
-		startService(new Intent(getApplicationContext(), ScribbleService.class));
+		startService(new Intent(getApplicationContext(), FloatpadService.class));
 		finish();
 	}
 }

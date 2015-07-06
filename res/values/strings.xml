@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">Scribble</string>
+    <string name="app_name">Float Pad</string>
     <string name="hello_world">Hello world!</string>
     <string name="textFieldPlaceholder">Scribble...</string>
 
